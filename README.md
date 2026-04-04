@@ -93,7 +93,8 @@ jsconst DEFAULT_BUDGETS = {
 };
 
 📄 License
-MIT — free to use, modify and distribute.
+
+This project is licensed under the MIT License.
 
 <div align="center">
   <strong>Built with ❤️ using HTML, CSS & JavaScript</strong><br>
