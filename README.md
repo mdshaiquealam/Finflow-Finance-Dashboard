@@ -44,19 +44,6 @@ No server, no install, no dependencies. It works entirely offline.
 Option 2 — Serve locally
 bash# Python
 python -m http.server 8080
-
-# Node.js
-npx serve .
-
-# Then visit http://localhost:8080/finflow-v5-final.html
-Option 3 — GitHub Pages (live link)
-
-Fork this repo
-Go to Settings → Pages
-Set source to Deploy from branch → main → / (root)
-Visit https://YOUR_USERNAME.github.io/finflow-dashboard/finflow-v5-final.html
-
-
 🗃 Project Structure
 finflow-dashboard/
 ├── finflow-v5-final.html   # Complete self-contained app (HTML + CSS + JS)
