@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finflow — Finance Dashboard </title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css"></style>
+
+
+<!-- Animated orbs -->
+<div class="o1 orb"></div><div class="o2 orb"></div><div class="o3 orb"></div>
+<div class="o4 orb"></div><div class="o5 orb"></div><div class="o6 orb"></div>
+
+<!-- Canvas particle system -->
+<canvas id="bgCanvas"></canvas>
+
+<div class="shell">
+<div class="sb-overlay" id="sbOverlay" onclick="closeSB()"></div>
+
+<!-- ── SIDEBAR ──────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="logo-gem">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">Finflow</div>
+      <span class="logo-ver">v5 · 2024</span>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Overview</div>
+    <button class="sb-link active" onclick="goPage('dashboard',this)">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+      Dashboard
+    </button>
+    <button class="sb-link" onclick="goPage('analytics',this)">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+      Analytics
+    </button>
+    <button class="sb-link" onclick="goPage('transactions',this)">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
+      Transactions
+    </button>
+    <div class="sb-section">Planning</div>
+    <button class="sb-link" onclick="goPage('budget',this)">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+      Budget Goals
+    </button>
+    <button class="sb-link" onclick="goPage('insights',this)">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20M6 20V10l6-8 6 8v10"/></svg></span>
+      Insights
+    </button>
+    <div class="sb-section">Dev</div>
+    <button class="sb-link" onclick="goPage('apilog',this)">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
+      API Log
+    </button>
+  </nav>
+  <div class="sb-footer">
+    <div class="role-lbl">Active Role</div>
+    <div class="role-sel-w">
+      <select class="role-sel" id="roleSel" onchange="setRole(this.value)">
+        <option value="admin">👑 Admin</option>
+        <option value="viewer">👁 Viewer</option>
+      </select>
+    </div>
+    <div class="r-badge admin" id="rBadge">● Admin access</div>
+    <button class="theme-btn" onclick="toggleTheme()">
+      <span id="themeLabel">☾ Dark mode</span>
+      <div class="tog"></div>
+    </button>
+  </div>
+</aside>
+
+<!-- ── MAIN ─────────────────────────────────────────── -->
+<div class="main">
+  <header class="topbar">
+    <div class="tb-l">
+      <button class="mob-toggle" onclick="toggleSB()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div>
+        <div class="pg-title" id="pgTitle">Dashboard</div>
+        <div class="pg-sub" id="pgSub">Financial overview · <span id="todayLbl"></span></div>
+      </div>
+    </div>
+    <div class="tb-r">
+      <div class="api-pill"><div class="api-dot" id="apiDot"></div><span id="apiLbl">API ready</span></div>
+      <button class="btn sm" onclick="exportCSV()">↓ CSV</button>
+      <button class="btn sm" onclick="exportJSON()">↓ JSON</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="lbar-wrap"><div class="lbar" id="lbar"></div></div>
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div id="ticker" class="ticker"></div>
+      <div class="sum-grid" id="sumGrid"></div>
+      <div class="g2">
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#4F46E5,#7C3AED)">
+          <div class="card-hd"><div class="card-title">Balance trend</div><span class="card-badge" style="background:rgba(124,58,237,.1);color:var(--acc-text)">Monthly</span></div>
+          <div class="ch-area" style="height:200px"><canvas id="cTrend"></canvas></div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#059669,#10B981)">
+          <div class="card-hd"><div class="card-title">Income vs Expenses</div></div>
+          <div class="ch-area" style="height:200px"><canvas id="cBar"></canvas></div>
+        </div>
+      </div>
+      <div class="g3">
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#EC4899,#F472B6)">
+          <div class="card-hd"><div class="card-title">Spending by category</div></div>
+          <div class="donut-wrap">
+            <div class="donut-canvas"><canvas id="cDonut"></canvas></div>
+            <div class="donut-leg" id="donutLeg"></div>
+          </div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#D97706,#F59E0B)">
+          <div class="card-hd"><div class="card-title">Savings gauge</div></div>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 190 105">
+              <defs>
+                <linearGradient id="gGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#DC2626"/>
+                  <stop offset="40%" stop-color="#D97706"/>
+                  <stop offset="70%" stop-color="#059669"/>
+                  <stop offset="100%" stop-color="#0D9488"/>
+                </linearGradient>
+              </defs>
+              <path d="M 20 92 A 75 75 0 0 1 170 92" fill="none" stroke="rgba(124,58,237,0.1)" stroke-width="14" stroke-linecap="round"/>
+              <path id="gaugePath" d="M 20 92 A 75 75 0 0 1 170 92" fill="none" stroke="url(#gGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="236" stroke-dashoffset="236" style="transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)"/>
+              <circle id="gaugeNeedle" cx="95" cy="92" r="7" fill="white" stroke="var(--acc)" stroke-width="3" style="transition:all 1.4s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))"/>
+            </svg>
+            <div class="gauge-val" id="gaugeVal">0%</div>
+            <div class="gauge-sub">monthly savings rate</div>
+            <div class="gauge-ticks"><span style="color:#DC2626">0%</span><span>Poor</span><span>Good</span><span>Great</span><span style="color:#0D9488">40%+</span></div>
+          </div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#EA580C,#F97316)">
+          <div class="card-hd"><div class="card-title">Top categories</div></div>
+          <div id="topCatBars"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="page" id="page-analytics">
+      <div class="g2">
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#059669,#34D399)">
+          <div class="card-hd"><div class="card-title">Cumulative cash flow</div></div>
+          <div class="ch-area" style="height:220px"><canvas id="cArea"></canvas></div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#2563EB,#60A5FA)">
+          <div class="card-hd"><div class="card-title">Income sources</div></div>
+          <div class="ch-area" style="height:220px"><canvas id="cPie"></canvas></div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#7C3AED,#A855F7)">
+          <div class="card-hd"><div class="card-title">Expense radar</div></div>
+          <div class="ch-area" style="height:250px"><canvas id="cRadar"></canvas></div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#DB2777,#F472B6)">
+          <div class="card-hd"><div class="card-title">Spending heatmap</div><span class="card-badge" style="background:rgba(219,39,119,.1);color:#831843">Jan–Dec</span></div>
+          <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:6px">Intensity by month — darker = more spending</div>
+          <div class="hmap" id="heatmap"></div>
+          <div class="hm-legend">
+            <span>Jan</span>
+            <div class="hm-scale">
+              <div class="hm-sq" style="background:rgba(219,39,119,.08)"></div>
+              <div class="hm-sq" style="background:rgba(219,39,119,.25)"></div>
+              <div class="hm-sq" style="background:rgba(219,39,119,.5)"></div>
+              <div class="hm-sq" style="background:rgba(219,39,119,.75)"></div>
+              <div class="hm-sq" style="background:rgba(219,39,119,.95)"></div>
+              <span style="font-size:9px;font-family:var(--mono);color:var(--text3);margin-left:4px">High</span>
+            </div>
+            <span>Dec</span>
+          </div>
+        </div>
+      </div>
+      <div class="g21">
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#0D9488,#2DD4BF)">
+          <div class="card-hd"><div class="card-title">Monthly net waterfall</div></div>
+          <div class="ch-area" style="height:220px"><canvas id="cWaterfall"></canvas></div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#EA580C,#FB923C)">
+          <div class="card-hd"><div class="card-title">Income polar</div></div>
+          <div class="ch-area" style="height:220px"><canvas id="cPolar"></canvas></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px;--card-stripe:linear-gradient(90deg,#4F46E5,#EC4899)">
+        <div class="card-hd"><div class="card-title">Category bubble — frequency vs spend</div></div>
+        <div class="ch-area" style="height:260px"><canvas id="cBubble"></canvas></div>
+      </div>
+      <div class="g2">
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#DC2626,#F87171)">
+          <div class="card-hd"><div class="card-title">7-day rolling spend avg</div></div>
+          <div class="ch-area" style="height:200px"><canvas id="cRolling"></canvas></div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#059669,#A855F7)">
+          <div class="card-hd"><div class="card-title">Income streams stacked</div></div>
+          <div class="ch-area" style="height:200px"><canvas id="cStack"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="page" id="page-transactions">
+      <div class="toolbar">
+        <div class="search-w">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="s-input" id="srch" placeholder="Search transactions…" oninput="renderTx()">
+        </div>
+        <select class="f-sel" id="fType" onchange="renderTx()"><option value="">All types</option><option value="income">Income</option><option value="expense">Expense</option></select>
+        <select class="f-sel" id="fCat" onchange="renderTx()"><option value="">All categories</option></select>
+        <select class="f-sel" id="fGrp" onchange="renderTx()"><option value="">No grouping</option><option value="month">By month</option><option value="category">By category</option><option value="type">By type</option></select>
+        <button class="btn" onclick="toggleAdv()">⚙ Filters</button>
+        <button class="btn primary" id="addBtn" onclick="openModal()">+ Add</button>
+      </div>
+      <div class="adv-panel" id="advPanel">
+        <div class="adv-g">
+          <div class="af"><label>From</label><input type="date" id="dFrom" onchange="renderTx()"></div>
+          <div class="af"><label>To</label><input type="date" id="dTo" onchange="renderTx()"></div>
+          <div class="af"><label>Min ₹</label><input type="number" id="aMin" placeholder="0" oninput="renderTx()"></div>
+          <div class="af"><label>Max ₹</label><input type="number" id="aMax" placeholder="∞" oninput="renderTx()"></div>
+          <div class="af"><label>Sort by</label><select id="sortBy" onchange="renderTx()"><option value="date">Date</option><option value="amount">Amount</option><option value="desc">Name</option><option value="category">Category</option></select></div>
+          <div class="af"><label>Order</label><select id="sortDir" onchange="renderTx()"><option value="-1">Desc</option><option value="1">Asc</option></select></div>
+        </div>
+        <div class="tag-list" id="catTags"></div>
+      </div>
+      <div id="txList"></div>
+    </div>
+
+    <!-- BUDGET GOALS -->
+    <div class="page" id="page-budget">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:15px;font-weight:800;letter-spacing:-.02em">Monthly Budget Goals</div>
+          <div style="font-size:12px;color:var(--text3);font-family:var(--mono);margin-top:2px">Track spending against your targets</div>
+        </div>
+        <button class="btn primary" id="addBudgetBtn" onclick="openBudgetModal()">+ Set Budget</button>
+      </div>
+      <div class="budget-grid" id="budgetGrid"></div>
+      <div class="g2">
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#7C3AED,#EC4899)">
+          <div class="card-hd"><div class="card-title">Budget utilization</div></div>
+          <div class="ch-area" style="height:220px"><canvas id="cBudgetBar"></canvas></div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#059669,#0D9488)">
+          <div class="card-hd"><div class="card-title">Remaining budget by category</div></div>
+          <div class="ch-area" style="height:220px"><canvas id="cBudgetDonut"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="page" id="page-insights">
+      <div class="ins-grid" id="insGrid"></div>
+      <div class="g2">
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#EA580C,#F97316)">
+          <div class="card-hd"><div class="card-title">Top spending categories</div></div>
+          <div id="spBars"></div>
+        </div>
+        <div class="card" style="--card-stripe:linear-gradient(90deg,#2563EB,#0D9488)">
+          <div class="card-hd"><div class="card-title">Monthly cashflow delta</div></div>
+          <div class="ch-area" style="height:220px"><canvas id="cDelta"></canvas></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px;--card-stripe:linear-gradient(90deg,#7C3AED,#059669)">
+        <div class="card-hd"><div class="card-title">Smart observations</div></div>
+        <div id="obsList"></div>
+      </div>
+    </div>
+
+    <!-- API LOG -->
+    <div class="page" id="page-apilog">
+      <div class="card" style="--card-stripe:linear-gradient(90deg,#0D9488,#2563EB)">
+        <div class="card-hd"><div class="card-title">Mock API log</div><button class="btn sm" onclick="clearLog()">Clear</button></div>
+        <div class="api-log-box">
+          <div class="api-log-hd"><span>Last 50 requests</span><span id="logCount" style="font-size:10px">0 entries</span></div>
+          <div class="api-log-body" id="apiBody"></div>
+        </div>
+        <div style="margin-top:16px">
+          <div style="font-size:9px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Simulate API calls</div>
+          <div style="display:flex;flex-wrap:wrap;gap:7px">
+            <button class="btn sm" onclick="mFetch('GET','/api/txs',200)">GET /txs</button>
+            <button class="btn sm" onclick="mFetch('POST','/api/txs',201)">POST /txs</button>
+            <button class="btn sm" onclick="mFetch('PUT','/api/txs/1',200)">PUT /txs/1</button>
+            <button class="btn sm" onclick="mFetch('GET','/api/summary',200)">GET /summary</button>
+            <button class="btn sm" onclick="mFetch('GET','/api/budget',200)">GET /budget</button>
+            <button class="btn sm danger" onclick="mFetch('GET','/api/fail',500)">500 Error</button>
+            <button class="btn sm danger" onclick="mFetch('POST','/api/auth',401)">401 Unauth</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TX MODAL -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="modalTitle">Add transaction</div>
+      <button class="modal-x" onclick="closeModal()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="fg"><label>Description *</label><input id="fDesc" placeholder="e.g. Monthly salary"></div>
+    <div class="fg-2">
+      <div class="fg"><label>Amount (₹) *</label><input id="fAmt" type="number" min="0" placeholder="0"></div>
+      <div class="fg"><label>Date *</label><input id="fDate" type="date"></div>
+    </div>
+    <div class="fg-2">
+      <div class="fg"><label>Type</label><select id="fType2"><option value="expense">Expense</option><option value="income">Income</option></select></div>
+      <div class="fg"><label>Category</label>
+        <select id="fCat2">
+          <option>Food & Dining</option><option>Transport</option><option>Shopping</option>
+          <option>Housing</option><option>Entertainment</option><option>Health</option>
+          <option>Education</option><option>Salary</option><option>Freelance</option>
+          <option>Investments</option><option>Utilities</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Note (optional)</label><input id="fNote" placeholder="Add a note…"></div>
+    <div class="modal-ft">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" onclick="saveTx()">Save transaction</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUDGET MODAL -->
+<div class="modal-bg" id="budgetModalBg" onclick="if(event.target===this)closeBudgetModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Set budget goal</div>
+      <button class="modal-x" onclick="closeBudgetModal()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="fg"><label>Category</label>
+      <select id="bCat">
+        <option>Food & Dining</option><option>Transport</option><option>Shopping</option>
+        <option>Housing</option><option>Entertainment</option><option>Health</option>
+        <option>Education</option><option>Investments</option><option>Utilities</option><option>Other</option>
+      </select>
+    </div>
+    <div class="fg"><label>Monthly budget (₹) *</label><input id="bAmt" type="number" min="0" placeholder="e.g. 5000"></div>
+    <div class="modal-ft">
+      <button class="btn" onclick="closeBudgetModal()">Cancel</button>
+      <button class="btn primary" onclick="saveBudget()">Save goal</button>
+    </div>
+  </div>
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="script.js"></script>
+</head>
+<body>
+   
