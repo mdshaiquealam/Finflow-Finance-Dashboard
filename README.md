@@ -1,4 +1,4 @@
-# 💰 Finflow — Finance Dashboard v5
+# 💰 Finflow — Finance Dashboard 
 
 > A beautiful, fully-featured personal finance dashboard built with pure **HTML, CSS & JavaScript** — no frameworks, no build tools, just open the file in any browser.
 
