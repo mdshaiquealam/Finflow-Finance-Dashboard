@@ -3,6 +3,16 @@
 A beautiful, fully-featured personal finance dashboard built with pure HTML, CSS & JavaScript — no frameworks, no build tools, just open the file in any browser.
 ✨ Features
 🎨 Beautiful UI
+<div align="center">
+
+![Zorvyn Finance](https://img.shields.io/badge/Zorvyn-Finance_Suite-blue?style=for-the-badge&logo=finance&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+
+*A modern, clean finance dashboard built with vanilla JavaScript - because sometimes simple is better*
+
+</div>
 
 Animated canvas particle system — 80 glowing floating dots drifting across the background
 6 floating glowing orbs with independent rotation & scale animations
@@ -13,7 +23,7 @@ Rainbow shimmer loading bar that plays on every page transition
 Gradient summary cards — each with a vibrant 3-stop colour + matching glow shadow
 
 📊 Charts & Visualisations (13 total)
-ChartDescriptionBalance trendLine chart showing monthly net balanceIncome vs ExpensesGrouped bar chart by monthSpending donutCategory breakdown with legendSavings gaugeAnimated SVG arc needleTop categoriesRanked horizontal progress barsCumulative cash flowFilled area chart of running totalIncome sourcesPie chart by income categoryExpense radarSpider web of spending patternsSpending heatmap12-cell monthly intensity mapMonthly waterfallGreen/red net bars by monthIncome polarRadial area chart by monthCategory bubbleFrequency vs spend scatter7-day rolling avgSmoothed daily expense trendIncome streamsStacked bar by income typeMonthly deltaSurplus/deficit bar chartBudget utilisationBudget vs actual grouped barsRemaining budgetDonut of remaining budget by category
+ChartDescriptionBalance trendLine chart showing monthly net balanceIncome vs ExpensesGrouped bar chart by monthSpending donutCategory breakdown with legendSavings gaugeAnimated SVG arc needleTop categoriesRanked horizontal progress barsCumulative cash flowFilled area chart of running totalIncome sourcesPie 
 🗂 Pages
 
 Dashboard — Live ticker, 6 KPI cards, trend line, bar chart, donut, gauge, top categories
@@ -32,23 +42,19 @@ Mock API integration — every action fires a simulated HTTP call with realistic
 Export — CSV and JSON export of the currently filtered transaction view
 Advanced filtering — date range, amount range, category tags, sort column & direction
 Grouping — group transactions by month, category or type with subtotals
-
-
-🚀 Getting Started
-Option 1 — Just open it
-bash# Download finflow-v5-final.html, then simply:
-open finflow-v5-final.html        # macOS
-start finflow-v5-final.html       # Windows
-xdg-open finflow-v5-final.html   # Linux
-No server, no install, no dependencies. It works entirely offline.
-Option 2 — Serve locally
-bash# Python
-python -m http.server 8080
-🗃 Project Structure
-finflow-dashboard/
-├── finflow-v5-final.html   # Complete self-contained app (HTML + CSS + JS)
-└── README.md               # This file
-Everything is in a single HTML file — no external files, no bundler, no npm install.
+# KEY FEATURES 
+🖥️ Interactive Dashboard — ticker, 6 KPI cards with descriptions, gauge, all dashboard charts listed
+📊 17 Charts — complete numbered table with chart type and which page it lives on
+💳 Transaction Management — every CRUD action, filter, sort, group and animation detail
+🎯 Budget Goals Tracker — colour-coded progress logic, both charts, default budgets, Admin restriction
+💡 Smart Insights — table of all 5 auto-generated observations with what each one tells you
+🔐 Role-Based Access — full permissions table comparing Admin vs Viewer across every capability
+🌗 Dark Mode — what adapts (charts, mesh, orbs, transitions, persistence)
+💾 LocalStorage — table of every key with exactly what gets stored in each
+🔌 Mock API — full table of every endpoint triggered, plus error simulation
+📤 Export — CSV vs JSON format details, filter-awareness, auto-naming
+🎨 Visual Effects — particle system, orbs, mesh gradient, glassmorphism, loading bar, card stripes
+📱 Responsive Design — breakpoints, table behaviour, sidebar collapse, sticky topbar
 
 🛠 Tech Stack
 TechnologyPurposeHTML5StructureCSS3 (custom properties, animations, glassmorphism)StylingVanilla JavaScript (ES6+)Logic & state managementChart.js 4.4All charts (loaded from CDN)Plus Jakarta SansPrimary fontDM MonoMonospace / data fontlocalStoragePersistence
