@@ -214,29 +214,7 @@ The API Log page includes **manual simulation buttons** for `500 Internal Server
 
 ---
 
-## 🚀 Getting Started
 
-### Option 1 — Zero setup *(recommended)*
-```bash
-open finflow-v5-final.html       # macOS
-start finflow-v5-final.html      # Windows
-xdg-open finflow-v5-final.html  # Linux
-```
-No server needed. Works entirely offline.
-
-### Option 2 — Local server
-```bash
-python -m http.server 8080    # Python 3
-npx serve .                   # Node.js
-# → http://localhost:8080/finflow-v5-final.html
-```
-
-### Option 3 — GitHub Pages *(free live link)*
-1. Push this repo to GitHub
-2. **Settings → Pages → Deploy from branch → main → / (root)**
-3. Live at: `https://YOUR_USERNAME.github.io/finflow-dashboard/finflow-v5-final.html`
-
----
 
 ## 🗃 Project Structure
 
